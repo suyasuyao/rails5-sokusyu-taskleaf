@@ -1,0 +1,15 @@
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.5/ext/websocket-driver
+/Users/yoo_ad/.rbenv/versions/2.6.8/bin/ruby -I /Users/yoo_ad/.rbenv/versions/2.6.8/lib/ruby/2.6.0 -r ./siteconf20210826-15505-5k7zwa.rb extconf.rb
+creating Makefile
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.5/ext/websocket-driver
+make "DESTDIR=" clean
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.5/ext/websocket-driver
+make "DESTDIR="
+compiling websocket_mask.c
+linking shared-object websocket_mask.bundle
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.5/ext/websocket-driver
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 websocket_mask.bundle ./.gem.20210826-15505-14fmb7r
