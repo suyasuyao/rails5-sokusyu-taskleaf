@@ -1,0 +1,15 @@
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/bootsnap-1.7.7/ext/bootsnap
+/Users/yoo_ad/.rbenv/versions/2.6.8/bin/ruby -I /Users/yoo_ad/.rbenv/versions/2.6.8/lib/ruby/2.6.0 -r ./siteconf20210826-15505-uogbbe.rb extconf.rb
+creating Makefile
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/bootsnap-1.7.7/ext/bootsnap
+make "DESTDIR=" clean
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/bootsnap-1.7.7/ext/bootsnap
+make "DESTDIR="
+compiling bootsnap.c
+linking shared-object bootsnap/bootsnap.bundle
+
+current directory: /Users/yoo_ad/work/rails/rails5-sokusyu-taskleaf/taskleaf/vendor/bundle/ruby/2.6.0/gems/bootsnap-1.7.7/ext/bootsnap
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 bootsnap.bundle ./.gem.20210826-15505-y5lhwg/bootsnap
