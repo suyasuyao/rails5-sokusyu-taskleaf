@@ -1,9 +1,20 @@
 # rails5-sokusyu-taskleaf
 
 
+# docker
+## 利用方法
+```
+# 初回のみ
+ docker-compose build --no-cache
+ docker-compose run web bin/rails db:create 
+# マイグレーションやデータ投入を行う際に 
+ docker-compose run web bin/rails db:migrate db:seed
+# アプリケーション起動時毎回実施
+docker-compose up
 
+```
 
-## 作り方
+# Docker環境の作り方
 
 rails_base_app のところに作りたいアプリ名いれる
 バージョンは5.2.6
@@ -48,17 +59,7 @@ Dockercomposeファイル作る。
 .envファイルを作る　
 環境変数を変える
 
+# bootstrapの設定
 
-# docker
-## 利用方法
-```
-# 初回のみ
- docker-compose build --no-cache
- docker-compose run web bin/rails db:create 
-# マイグレーションやデータ投入を行う際に 
- docker-compose run web bin/rails db:migrate db:seed
-# アプリケーション起動時毎回実施
-docker-compose up
 
-```
 
