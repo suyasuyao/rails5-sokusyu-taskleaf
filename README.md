@@ -122,3 +122,32 @@ docker-compose run web bin/rails db:migrate db:seed
 
 
 # controller作成
+
+```
+docker-compose run web bin/rails g controller tasks index show new edit 
+```
+
+# ルーティングファイル修正
+
+taskleaf/config/routes.rb
+
+```
+Rails.application.routes.draw do
+  resources :tasks
+  # トップページにtaskのindexページを表示
+  root to: 'tasks#index'
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+end
+
+```
+
+
+# indexページ作成
+
+link_to　new_task_pathについてはヘルパーメソッド
+
+```
+<h1>タスク一覧</h1>
+<%= link_to '新規登録', , class: 'btn btn-primary' %>
+
+```
