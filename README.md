@@ -106,6 +106,19 @@ rm app/javascript/stylesheets/application.css
 //= require_tree .
 ```
 
-```python
+```shell
 bin/rails g controller sample index
 ```
+
+# taskmodel作成
+
+```
+docker-compose run web bin/rails g model Task name:string description:text
+```
+
+```
+docker-compose run web bin/rails db:migrate db:seed
+```
+
+
+# controller作成
