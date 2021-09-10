@@ -18,6 +18,9 @@ class TasksController < ApplicationController
   private
 
   def task_params
+    # デバッグ用
+    p "パラメータ: #{params} "
+    p params.class
     params.require(:task).permit(:name, :description)
   end
 end

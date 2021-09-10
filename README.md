@@ -159,12 +159,14 @@ taskleaf/app/views/tasks/index.html.erb
 
 newメソッドで@taskを作成することで返り値となりnew画面で利用できる
 
+taskleaf/app/controllers/tasks_controller.rb
 ```
-class Task < ApplicationRecord
+class TasksController < ApplicationController
+（略）
   def new
     @task = Task.new
   end
-end
+(略)
 ```
 
 taskleaf/app/views/tasks/new.html.erb
@@ -175,7 +177,8 @@ taskleaf/app/views/tasks/new.html.erb
 <div class="nav justify-content-end">
   <%= link_to "一覧", tasks_path, class: "nav-link" %>
 
-<%= form_with(model: @task, local:true) do |f| %>
+
+<%= form_with(model: @task, url: tasks_path, local:true ) do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name , class: "form-control", id:"task_name" %>
@@ -191,8 +194,12 @@ taskleaf/app/views/tasks/new.html.erb
 ```
 
 以下でnewアクションは@taskを引数にフォームを作成する。
+url: tasks_pathはPOSTメソッドに対応するpathがそれしかないため
+パスは`bin/rails routes`で確認する
+
+
 ```
-<%= form_with(model: @task, local:true) do |f| %>
+<%= form_with(model: @task, url: tasks_path, local:true ) do |f| %>
 ```
 
 以下でフォームを利用している。
@@ -201,4 +208,40 @@ taskleaf/app/views/tasks/new.html.erb
     <%= f.label :name %>
     <%= f.text_field :name , class: "form-control", id:"task_name" %>
   </div>
+```
+
+# createアクション作成
+
+以下を追記する
+
+taskleaf/app/controllers/tasks_controller.rb
+
+taskモデルのパラメータ取得するところは、共通化できるので切り出し
+コントローラ内では、paramsからレスポンスパラメータを取得できる
+この際、対象のモデル名をrequireで絞り込み、必要な属性をpermitで指定することで保存。
+
+
+```
+class TasksController < ApplicationController
+
+略
+
+  def create
+    task = Task.new(task_params)
+    task.save!
+    redirect_to tasks_url, notice: "タスク「#{task.name}を登録しました。"
+  end
+
+  private
+
+  def task_params
+    params.require(:task).permit(:name, :description)
+  end
+end
+
+```
+
+パラメータの例(ActionController::Parametersクラス)
+```
+{\"utf8\"=>\"✓\", \"authenticity_token\"=>\"mQq0LVzEM06pwZ8hO2BhUHnWg+koGdgKqgvfBv1Wjx9UndfRXEH2QQS26ZUT3qKdjsNKITQgjpeQ2arJSdVLXQ==\", \"task\"=>{\"name\"=>\"a\", \"description\"=>\"a\"}, \"commit\"=>\"Create Task\", \"controller\"=>\"tasks\", \"action\"=>\"create\"} "
 ```
