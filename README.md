@@ -106,6 +106,217 @@ rm app/javascript/stylesheets/application.css
 //= require_tree .
 ```
 
-```python
+```shell
 bin/rails g controller sample index
 ```
+
+navbarの指定
+
+taskleaf/app/views/layouts/application.html.erb
+```
+    <div class= "app-title navbar navbar-expand-md navbar-light bg-light">
+      <div class="navbar-brand"> Taskleaf </div>
+    </div>
+```
+
+# taskmodel作成
+
+```
+docker-compose run web bin/rails g model Task name:string description:text
+```
+
+```
+docker-compose run web bin/rails db:migrate db:seed
+```
+
+
+# controller作成
+
+```
+docker-compose run web bin/rails g controller tasks index show new edit 
+```
+
+# ルーティングファイル修正
+
+taskleaf/config/routes.rb
+
+```
+Rails.application.routes.draw do
+  resources :tasks
+  # トップページにtaskのindexページを表示
+  root to: 'tasks#index'
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+end
+
+```
+
+
+# index(一覧）ページ作成
+
+
+link_to　new_task_pathについてはヘルパーメソッド
+
+taskleaf/app/views/tasks/index.html.erb
+```
+<h1>タスク一覧</h1>
+<%= link_to '新規登録', , class: 'btn btn-primary' %>
+
+```
+
+# new（新規作成）ページ作成
+
+
+newメソッドで@taskを作成することで返り値となりnew画面で利用できる
+
+taskleaf/app/controllers/tasks_controller.rb
+```
+class TasksController < ApplicationController
+（略）
+  def new
+    @task = Task.new
+  end
+(略)
+```
+
+taskleaf/app/views/tasks/new.html.erb
+
+```
+<h1>タスクの新規登録</h1>
+
+<div class="nav justify-content-end">
+  <%= link_to "一覧", tasks_path, class: "nav-link" %>
+
+
+<%= form_with(model: @task, url: tasks_path, local:true ) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name , class: "form-control", id:"task_name" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_field :description , class: "form-control", id:"task_description" %>
+  </div>
+
+  <%= f.submit class: "btn btn-primary" %>
+
+<% end %>
+```
+
+以下でnewアクションは@taskを引数にフォームを作成する。
+url: tasks_pathはPOSTメソッドに対応するpathがそれしかないため
+パスは`bin/rails routes`で確認する
+
+
+```
+<%= form_with(model: @task, url: tasks_path, local:true ) do |f| %>
+```
+
+以下でフォームを利用している。
+```
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name , class: "form-control", id:"task_name" %>
+  </div>
+```
+
+# createアクション作成
+
+以下を追記する
+
+taskleaf/app/controllers/tasks_controller.rb
+
+1 taskモデルのパラメータ取得するところは、共通化できるので切り出し
+2 コントローラ内では、paramsからレスポンスパラメータを取得できる
+この際、対象のモデル名をrequireで絞り込み、必要な属性をpermitで指定することで保存。
+
+```
+class TasksController < ApplicationController
+
+略
+
+  def create
+    task = Task.new(task_params)
+    task.save!
+    redirect_to tasks_url, notice: "タスク「#{task.name}を登録しました。"
+  end
+
+  private
+
+  def task_params
+    params.require(:task).permit(:name, :description)
+  end
+end
+
+```
+
+パラメータの例(ActionController::Parametersクラス)
+```
+{\"utf8\"=>\"✓\", \"authenticity_token\"=>\"mQq0LVzEM06pwZ8hO2BhUHnWg+koGdgKqgvfBv1Wjx9UndfRXEH2QQS26ZUT3qKdjsNKITQgjpeQ2arJSdVLXQ==\", \"task\"=>{\"name\"=>\"a\", \"description\"=>\"a\"}, \"commit\"=>\"Create Task\", \"controller\"=>\"tasks\", \"action\"=>\"create\"} "
+```
+
+3 フラッシュメッセージの表示
+redirect_to時にnoticeもしくはalert、もしくはflashオプションを指定することで、フラッシュメッセージを表示できる
+flashで入れる場合は、ハッシュ値で渡せばnoticeやalert以外も指定可能
+
+```
+    redirect_to tasks_url, notice: "タスク「#{task.name}を登録しました。"
+```
+
+flash.noticeでnoticeのメッセージを開いている。
+taskleaf/app/views/layouts/application.html.erb
+
+```
+    <% if flash.notice.present? %>
+      <div class="alert alert-success">
+      <%= flash.notice %>
+      </div>
+    <% end %>
+```
+
+
+# new画面の作成
+
+
+以下ではTaskモデルの論理名をconfig/locales/ja.ymlからとってくる
+https://fuqda.hatenablog.com/entry/2019/04/07/212254
+
+``` html
+        <th>
+          <%= Task.human_attribute_name(:name) %>
+          <%= Task.human_attribute_name(:created_at) %>
+        </th>
+```
+
+
+taskleaf/app/views/tasks/index.html.erb
+```
+<h1>タスク一覧</h1>
+<%= link_to '新規登録', new_task_path, class: 'btn btn-primary' %>
+
+<div class='mb-3'>
+  <table class='table table-hover'>
+    <thead class='thead-default'>
+      <tr>
+        <th>
+          <%= Task.human_attribute_name(:name) %>
+          <%= Task.human_attribute_name(:created_at) %>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tasks.each do |task| %>
+      <tr>
+        <td>
+        <%= task.name %>
+        </td>
+        <td> 
+        <%= task.created_at %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+``
+
+----------------------------------------------------

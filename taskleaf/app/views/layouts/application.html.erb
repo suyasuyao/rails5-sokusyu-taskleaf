@@ -10,6 +10,16 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class= "app-title navbar navbar-expand-md navbar-light bg-light">
+      <div class="navbar-brand"> Taskleaf </div>
+    </div>
+    <% if flash.notice.present? %>
+      <div class="alert alert-success">
+      <%= flash.notice %>
+      </div>
+    <% end %>
+    <div class="container">
+      <%= yield %>
+    </div>
   </body>
 </html>
