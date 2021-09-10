@@ -110,6 +110,15 @@ rm app/javascript/stylesheets/application.css
 bin/rails g controller sample index
 ```
 
+navbarの指定
+
+taskleaf/app/views/layouts/application.html.erb
+```
+    <div class= "app-title navbar navbar-expand-md navbar-light bg-light">
+      <div class="navbar-brand"> Taskleaf </div>
+    </div>
+```
+
 # taskmodel作成
 
 ```
@@ -263,3 +272,51 @@ taskleaf/app/views/layouts/application.html.erb
       </div>
     <% end %>
 ```
+
+
+# new画面の作成
+
+
+以下ではTaskモデルの論理名をconfig/locales/ja.ymlからとってくる
+https://fuqda.hatenablog.com/entry/2019/04/07/212254
+
+``` html
+        <th>
+          <%= Task.human_attribute_name(:name) %>
+          <%= Task.human_attribute_name(:created_at) %>
+        </th>
+```
+
+
+taskleaf/app/views/tasks/index.html.erb
+```
+<h1>タスク一覧</h1>
+<%= link_to '新規登録', new_task_path, class: 'btn btn-primary' %>
+
+<div class='mb-3'>
+  <table class='table table-hover'>
+    <thead class='thead-default'>
+      <tr>
+        <th>
+          <%= Task.human_attribute_name(:name) %>
+          <%= Task.human_attribute_name(:created_at) %>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tasks.each do |task| %>
+      <tr>
+        <td>
+        <%= task.name %>
+        </td>
+        <td> 
+        <%= task.created_at %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+``
+
+----------------------------------------------------
