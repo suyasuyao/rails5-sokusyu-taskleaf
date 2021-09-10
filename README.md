@@ -216,10 +216,9 @@ url: tasks_pathはPOSTメソッドに対応するpathがそれしかないため
 
 taskleaf/app/controllers/tasks_controller.rb
 
-taskモデルのパラメータ取得するところは、共通化できるので切り出し
-コントローラ内では、paramsからレスポンスパラメータを取得できる
+1 taskモデルのパラメータ取得するところは、共通化できるので切り出し
+2 コントローラ内では、paramsからレスポンスパラメータを取得できる
 この際、対象のモデル名をrequireで絞り込み、必要な属性をpermitで指定することで保存。
-
 
 ```
 class TasksController < ApplicationController
@@ -244,4 +243,23 @@ end
 パラメータの例(ActionController::Parametersクラス)
 ```
 {\"utf8\"=>\"✓\", \"authenticity_token\"=>\"mQq0LVzEM06pwZ8hO2BhUHnWg+koGdgKqgvfBv1Wjx9UndfRXEH2QQS26ZUT3qKdjsNKITQgjpeQ2arJSdVLXQ==\", \"task\"=>{\"name\"=>\"a\", \"description\"=>\"a\"}, \"commit\"=>\"Create Task\", \"controller\"=>\"tasks\", \"action\"=>\"create\"} "
+```
+
+3 フラッシュメッセージの表示
+redirect_to時にnoticeもしくはalert、もしくはflashオプションを指定することで、フラッシュメッセージを表示できる
+flashで入れる場合は、ハッシュ値で渡せばnoticeやalert以外も指定可能
+
+```
+    redirect_to tasks_url, notice: "タスク「#{task.name}を登録しました。"
+```
+
+flash.noticeでnoticeのメッセージを開いている。
+taskleaf/app/views/layouts/application.html.erb
+
+```
+    <% if flash.notice.present? %>
+      <div class="alert alert-success">
+      <%= flash.notice %>
+      </div>
+    <% end %>
 ```
