@@ -142,12 +142,63 @@ end
 ```
 
 
-# indexページ作成
+# index(一覧）ページ作成
+
 
 link_to　new_task_pathについてはヘルパーメソッド
 
+taskleaf/app/views/tasks/index.html.erb
 ```
 <h1>タスク一覧</h1>
 <%= link_to '新規登録', , class: 'btn btn-primary' %>
 
+```
+
+# new（新規作成）ページ作成
+
+
+newメソッドで@taskを作成することで返り値となりnew画面で利用できる
+
+```
+class Task < ApplicationRecord
+  def new
+    @task = Task.new
+  end
+end
+```
+
+taskleaf/app/views/tasks/new.html.erb
+
+```
+<h1>タスクの新規登録</h1>
+
+<div class="nav justify-content-end">
+  <%= link_to "一覧", tasks_path, class: "nav-link" %>
+
+<%= form_with(model: @task, local:true) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name , class: "form-control", id:"task_name" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_field :description , class: "form-control", id:"task_description" %>
+  </div>
+
+  <%= f.submit class: "btn btn-primary" %>
+
+<% end %>
+```
+
+以下でnewアクションは@taskを引数にフォームを作成する。
+```
+<%= form_with(model: @task, local:true) do |f| %>
+```
+
+以下でフォームを利用している。
+```
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name , class: "form-control", id:"task_name" %>
+  </div>
 ```
