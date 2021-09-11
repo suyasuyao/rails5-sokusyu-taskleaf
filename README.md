@@ -493,3 +493,27 @@ taskleaf/app/controllers/tasks_controller.rb
   end
 
 ```
+
+new画面とほぼ同じ
+taskleaf/app/views/tasks/edit.html.erb
+
+``` html
+<h1>タスクの編集</h1>
+
+<div class="nav justify-content-end">
+  <%= link_to  "一覧", tasks_path, class:"nav-link" %>
+</div>
+
+<%= form_with model:@task, local:true do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class:"form-control", id: "task_name" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :descriotion, rows:5, class:"form-control", id: "task_description" %>
+  </div>
+  <%= f.submit class:"btn btn-primary" %>
+
+<% end %>
+```

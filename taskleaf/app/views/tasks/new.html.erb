@@ -7,13 +7,12 @@
 <%= form_with(model: @task, url: tasks_path, local:true ) do |f| %>
   <div class="form-group">
     <%= f.label :name %>
-    <%= f.text_field :name , class: "form-control", id:"task_name" %>
+    <%= f.text_field :name, class: "form-control", id: "task_name" %>
   </div>
   <div class="form-group">
     <%= f.label :description %>
     <%= f.text_field :description , class: "form-control", id:"task_description" %>
   </div>
-
   <%= f.submit class: "btn btn-primary" %>
 
 <% end %>
