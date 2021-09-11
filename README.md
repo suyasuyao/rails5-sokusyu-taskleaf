@@ -353,6 +353,119 @@ taskleaf/app/views/tasks/index.html.erb
     </tbody>
   </table>
 </div>
-``
+```
 
 ----------------------------------------------------
+
+# showアクション
+
+indexページでlinktoを使い、showページへのリンクを作成
+
+taskleaf/app/views/tasks/index.html.erb
+```html
+        <td>
+        <%= link_to task.name, task_path(task) %>
+        </td>
+        <td> 
+        <%= task.created_at %>
+        </td>
+```
+
+showアクションでURLのパスからパラメータのidを取得
+taskleaf/app/controllers/tasks_controller.rb
+
+``` ruby
+  def show
+    @task = Task.find(params[:id])
+  end
+```
+
+このパラメータは、フォーム時のパラメータと違い、フォームデータの中には入ってない。
+routeコマンドで出したときにでる以下で規定されているもの
+
+```
+ task GET    /tasks/:id(.:format)   tasks#show
+```
+
+```
+<ActionController::Parameters {"controller"=>"tasks", "action"=>"show", "id"=>"1"} permitted: false>
+
+Parameters: {"id"=>"1"}
+```
+
+
+taskleaf/app/views/tasks/show.html.erb
+
+```html
+<h1>タスクの詳細</h1>
+
+<div class="nav justify-content-end">
+  <%= link_to "一覧", tasks_path, class:'nav-link' %>
+</div>
+
+<table class="table table-hover">
+  <tbody>
+    <tr>
+      <th>
+        <%= Task.human_attribute_name(:id)%>
+      </th>
+      <td>
+        <%= @task.id %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <%= Task.human_attribute_name(:name) %>
+      </th>
+      <td>
+        <%= @task.name %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <%= Task.human_attribute_name(:description) %>
+      </th>
+      <td>
+        <%= simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div") %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <%= Task.human_attribute_name(:created_at) %>
+      </th>
+      <td>
+        <%= @task.created_at %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <%= Task.human_attribute_name(:updated_at) %>
+      </th>
+      <td>
+        <%= @task.updated_at %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+```
+
+simple_formatは以下の効果がある
+文字数が可変のときに役立つ？
+
+
+文字列を<p>で括る
+改行は
+を付与
+連続した改行は、</p><p>を付与
+
+https://qiita.com/mojihige/items/c01682774e8ef29b361f
+https://railsdoc.com/page/simple_format
+
+hメソッドはhtmlエスケープしてくれる
+sanitizeは一部の危険なタグを削除するので、タグを削除せず安全にしたい場合、h
+https://docs.ruby-lang.org/ja/2.7.0/class/ERB=3a=3aUtil.html
+
+```
+        <%= simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div") %>
+```
