@@ -517,3 +517,35 @@ taskleaf/app/views/tasks/edit.html.erb
 
 <% end %>
 ```
+
+
+# editとnewの共通化
+
+editとcreateでほぼ同じ画面を使っているので共通化する。
+共通化にはパーシャル機能を使う。パーシャルとなる画面のファイル名は最初に_がつく
+
+taskleaf/app/views/tasks/_form.html.erb
+
+``` html
+<%= form_with model:task, local:true do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control", id: "task_name" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :descriotion, rows:5, class:"form-control", id: "task_description" %>
+  </div>
+  <%= f.submit class: "btn btn-primary" %>
+<% end %>
+```
+
+renderでパーシャルを呼び出すときは_も拡張子もつけない名前とする
+ {task: @task} では各画面に引き渡されたインスタンス変数@taskをローカル変数taskに読み替えている。
+
+
+taskleaf/app/views/tasks/new.html.erb
+taskleaf/app/views/tasks/edit.html.erb
+``` html
+<%= render partial: "form", locals: {task: @task} %>
+```
