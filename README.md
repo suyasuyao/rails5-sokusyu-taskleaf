@@ -549,3 +549,23 @@ taskleaf/app/views/tasks/edit.html.erb
 ``` html
 <%= render partial: "form", locals: {task: @task} %>
 ```
+
+
+# destroyの設定
+
+taskleaf/app/controllers/tasks_controller.rb
+edit,createとほぼ同じ
+```ruby
+  def destroy
+    task = Task.find(params[:id])
+    task.destroy
+    redirect_to tasks_url, notice: "タスク「#{task.name}」を削除しました。"
+  end
+
+```
+
+link_toでmethodに:deleteを指定し、data: confirmで確認ポップアップを出している。
+
+``` html
+          <%= link_to  "削除", task_path(task), method: :delete, data: { confirm: "タスク「#{task.name}」を削除します。よろしいですか？"}, class: 'btn btn-primary mr-3' %>
+```
