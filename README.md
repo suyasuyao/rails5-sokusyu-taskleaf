@@ -12,6 +12,8 @@
 # アプリケーション起動時毎回実施
 docker-compose up
 
+#リセットしたいとき
+docker container prune
 ```
 
 # Docker環境の作り方
@@ -117,6 +119,40 @@ taskleaf/app/views/layouts/application.html.erb
     <div class= "app-title navbar navbar-expand-md navbar-light bg-light">
       <div class="navbar-brand"> Taskleaf </div>
     </div>
+```
+
+## bootstrap4のインストール
+
+以下を設定しインストール
+taskleaf/package.json
+```
+{
+  "name": "taskleaf",
+  "private": true,
+  "dependencies": {
+    "@popperjs/core": "",
+    "bootstrap": "^4.6.0",
+    "jquery": "^3.4.1"
+  }
+}
+
+```
+
+taskleaf/app/assets/stylesheets/application.scss
+```
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+```
+
+taskleaf/app/assets/stylesheets/application.scss
+```
+//= require rails-ujs
+//= require activestorage
+//= require turbolinks
+//= require jquery/dist/jquery.js
+//= require popper.js/dist/popper.min.js
+//= require_tree .
+//= require bootstrap/dist/js/bootstrap.min.js
 ```
 
 # taskmodel作成
