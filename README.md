@@ -186,8 +186,8 @@ end
 
 ```
 
+# new（新規作成）ページ作成
 
-# index(一覧）ページ作成
 
 
 link_to　new_task_pathについてはヘルパーメソッド
@@ -198,9 +198,6 @@ taskleaf/app/views/tasks/index.html.erb
 <%= link_to '新規登録', , class: 'btn btn-primary' %>
 
 ```
-
-# new（新規作成）ページ作成
-
 
 newメソッドで@taskを作成することで返り値となりnew画面で利用できる
 
@@ -310,7 +307,7 @@ taskleaf/app/views/layouts/application.html.erb
 ```
 
 
-# new画面の作成
+# index画面の作成
 
 
 以下ではTaskモデルの論理名をconfig/locales/ja.ymlからとってくる
@@ -468,4 +465,31 @@ https://docs.ruby-lang.org/ja/2.7.0/class/ERB=3a=3aUtil.html
 
 ```
         <%= simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div") %>
+```
+
+
+
+# editアクション
+
+editアクションとupdateアクションを実装
+editはshowと同じく、パラメータからidを取るだけ。
+updateはedit画面で更新対象となったパラメータをフォームで投稿するので、
+変数taskで値を取得したあと、task_paramの内容で更新かける
+変数task（ローカル変数）は@task(インスタンス変数）ではないかといえば、
+ビューへのデータの受け渡しがないから
+createとupdateは受け渡されたデータをもとに修正するのみ
+
+taskleaf/app/controllers/tasks_controller.rb
+``` ruby
+
+  def edit
+    @task = Task.find(params[:id])
+  end
+
+  def update
+    task = Task.find(params[:id])
+    task.update(task_params)
+    redirect_to tasks_url, notice: "タスク「#{task.name}」を更新しました。"
+  end
+
 ```
