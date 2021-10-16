@@ -569,3 +569,34 @@ link_toでmethodに:deleteを指定し、data: confirmで確認ポップアッ�
 ``` html
           <%= link_to  "削除", task_path(task), method: :delete, data: { confirm: "タスク「#{task.name}」を削除します。よろしいですか？"}, class: 'btn btn-primary mr-3' %>
 ```
+
+# 日本語の設定
+
+config/locales/ja.ymlを設定
+```shell
+curl -s https://raw.githubusercontent.com/svenfuchs/rails-i18n/master/rails/locale/ja.yml -o config/locales/ja.yml
+```
+
+model情報を追記
+
+```yml
+    models:
+      task: タスク
+    attributes:
+      task:
+        id: ID
+        name: 名称
+        description: 詳しい説明
+        created_at: 登録日時
+        updated_at: 更新日時
+```
+
+以下を追記
+config/application.rb
+```ruby
+
+config.i18n.default_locale = :ja # 追加
+
+```
+
+
