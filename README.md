@@ -599,4 +599,34 @@ config.i18n.default_locale = :ja # 追加
 
 ```
 
+# データの内容を制限する
 
+```
+
+# null指定するマイグレーションファイルつくるかやめる
+docker-compose run web bin/rails g migration ChangeTasksNameNotNull
+
+docker-compose run web bin/rails db:migrate
+
+docker-compose run web bin/rails c
+
+```
+
+```shell
+yoo_ad@ymbp13 ~/w/r/rails5-sokusyu-taskleaf (feature/issue#11)> docker-compose run web bin/rails c
+[+] Running 1/0
+ ⠿ Container rails5-sokusyu-taskleaf-db-1  Running                                                                                     0.0s
+Loading development environment (Rails 5.2.6)
+irb(main):001:0> Task.new
+=> #<Task id: nil, name: nil, description: nil, created_at: nil, updated_at: nil>
+irb(main):002:0> Task.new.save
+   (0.6ms)  BEGIN
+  Task Create (4.6ms)  INSERT INTO "tasks" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2021-12-09 22:59:31.343536"], ["updated_at", "2021-12-09 22:59:31.343536"]]
+   (0.8ms)  ROLLBACK
+Traceback (most recent call last):
+        1: from (irb):2
+ActiveRecord::NotNullViolation (PG::NotNullViolation: ERROR:  null value in column "name" violates not-null constraint)
+DETAIL:  Failing row contains (15, null, null, 2021-12-09 22:59:31.343536, 2021-12-09 22:59:31.343536).
+: INSERT INTO "tasks" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"
+
+```
