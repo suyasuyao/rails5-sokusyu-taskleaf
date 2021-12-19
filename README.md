@@ -601,12 +601,18 @@ config.i18n.default_locale = :ja # 追加
 
 # データの内容を制限する
 
+taskテーブルのnameにnotnull制約設定 
+taskテーブルのnameを最大30文字とする
+taksテーブルのindexにユニーク制約を設定
+
 ```
 
-# null指定するマイグレーションファイルつくるかやめる
+# 新しいマイグレーションファイルつくるか既存のファイルを編集する。
 docker-compose run web bin/rails g migration ChangeTasksNameNotNull
 
+# docker-compose run web bin/rails db:migrate:reset
 docker-compose run web bin/rails db:migrate
+docker-compose run web bin/rails db:migrate:status
 
 docker-compose run web bin/rails c
 
