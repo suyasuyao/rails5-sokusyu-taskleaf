@@ -636,3 +636,38 @@ DETAIL:  Failing row contains (15, null, null, 2021-12-09 22:59:31.343536, 2021-
 : INSERT INTO "tasks" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"
 
 ```
+
+
+以下に書き換える
+app/controllers/tasks_controller.rb
+```ruby
+    @task = Task.new(task_params)
+
+    if @task.save
+      #redirect先を@taskにすべきかどうか？ｘ
+      redirect_to @task,  notice: "タスク「#{@task.name}」を登録しました。"
+    else
+      render :new
+    end
+```
+- saveメソッドは、保存できない場合falseを返します。
+- save!メソッドは、保存できない場合例外ActiveRecord::RecordInvalidが発生します。
+
+
+変数をローカル変数からインスタンス変数に変更してるのは、検証失敗時のrenderで表示する画面に渡すため 
+
+
+app/views/tasks/_form.html.erb
+```erbruby
+<% if task.errors.present? %>
+<ul id="error_explantion">
+  <% task.errors.full_messages.each do|message| %>
+    <li><%= message %></li>
+  <% end %>
+</ul>
+<% end %>
+```
+
+渡されたtaskにはerrosがある
+https://qiita.com/mom0tomo/items/e1e3fd29729b2d112a48
+partial内ではインスタンス変数を使わない
