@@ -671,3 +671,21 @@ app/views/tasks/_form.html.erb
 渡されたtaskにはerrosがある
 https://qiita.com/mom0tomo/items/e1e3fd29729b2d112a48
 partial内ではインスタンス変数を使わない
+
+
+
+オリジナルの検証コード書き方
+```ruby
+class Task < ApplicationRecord
+  validates :name, presence: true,length: {maximum:30}
+  validate :validate_name_not_including_comma
+
+  private
+  def validate_name_not_including_comma
+    errors.add(:name, 'にカンマをふくめることはできません') if name&.include?(',')
+  end
+end
+
+```
+name&の部分はnilチェックしなくても、安全に操作するためのおまじない
+if name&.include?
