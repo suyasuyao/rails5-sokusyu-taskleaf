@@ -816,6 +816,20 @@ end
 ```shell
  docker-compose exec web bin/rails g controller Admin::Users new edit show index
 ```
+### ルートファイル設定
+
+ネームスペースadminにusersを配置
+```ruby
+Rails.application.routes.draw do
+  namespace :admin do
+    resources :users
+  end
+  resources :tasks
+  # トップページにtaskのindexページを表示
+  root to: 'tasks#index'
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+end
+```
 
 ### 登録フォーム作成(new,create)
 ### 編集フォーム作成(edit,update)
