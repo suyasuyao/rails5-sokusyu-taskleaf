@@ -4,13 +4,17 @@
 # docker
 ## 利用方法
 ```
-# 初回のみ
+# ビルド時のみ
  docker-compose build --no-cache
+ 
+# アプリケーション起動時毎回実施
+docker-compose up
+
+# データベースコンテナが存在しないときのみ
  docker-compose run web bin/rails db:create 
 # マイグレーションやデータ投入を行う際に 
  docker-compose run web bin/rails db:migrate db:seed
-# アプリケーション起動時毎回実施
-docker-compose up
+
 
 #リセットしたいとき
 docker container prune
@@ -752,4 +756,19 @@ end
 
  docker-compose exec web bin/rails db:migrate
 
+```
+
+## パスワードをdigest変換し保存する
+
+bcryptを追加
+
+```ruby
+gem 'bcrypt', '~> 3.1.7'
+```
+
+ビルドを最初からやり直し
+
+bcryptのgemがあるか確認する
+```shell
+docker-compose exec web gem list
 ```
