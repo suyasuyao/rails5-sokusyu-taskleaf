@@ -711,3 +711,45 @@ end
 ```
 
 nameがblankの際、検証の前にデータを修正するコールバックを実行している
+
+
+# ログイン機能を作る
+
+## Userモデルを作る
+
+userモデルを作成
+```shell
+ docker-compose exec web bin/rails g model user name:string email:string password_digest:string
+
+      invoke  active_record
+      create    db/migrate/20211229082045_create_users.rb
+      create    app/models/user.rb
+      invoke    test_unit
+      create      test/models/user_test.rb
+      create      test/fixtures/users.yml
+
+```
+
+マイグレーションファイルを修正し、null成約とユニーセク制約を設定
+
+```ruby
+class CreateUsers < ActiveRecord::Migration[5.2]
+  def change
+    create_table :users do |t|
+      t.string :name,null: false
+      t.string :email,null: false
+      t.string :password_digest,null: false
+
+      t.timestamps
+      t.index :email, unique:true
+    end
+  end
+end
+
+```
+
+```shell
+
+ docker-compose exec web bin/rails db:migrate
+
+```
