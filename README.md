@@ -755,9 +755,7 @@ end
 ```
 
 ```shell
-
  docker-compose exec web bin/rails db:migrate
-
 ```
 
 ## パスワードをdigest変換し保存する
@@ -787,3 +785,36 @@ class User < ApplicationRecord
 end
 
 ```
+
+#ユーザー管理機能 を追加する
+## Userモデルにadminフラグを追加する
+
+```shell
+ docker-compose exec web bin/rails g migration add_admin_to_users
+```
+
+userテーブルにadminカラムを追加する trueなら管理者扱い
+```ruby
+class AddAdminToUsers < ActiveRecord::Migration[5.2]
+  def change
+    add_column :users, :admin, :boolean,default: false , null: false
+  end
+end
+```
+
+```shell
+ docker-compose exec web bin/rails db:migrate
+# カラムの確認
+ docker-compose exec web bin/rails c
+ User.column_names
+ User.columns.map(&:name)
+```
+
+
+
+## ユーザー管理のためのコントローラを追加する
+### 登録フォーム作成(new,create)
+### 編集フォーム作成(edit,update)
+### 一覧表示作成(index)
+### ユーザー詳細作成(show)
+### ユーザー削除作成(delete)
