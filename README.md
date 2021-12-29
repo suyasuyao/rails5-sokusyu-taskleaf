@@ -813,6 +813,10 @@ end
 
 
 ## ユーザー管理のためのコントローラを追加する
+```shell
+ docker-compose exec web bin/rails g controller Admin::Users new edit show index
+```
+
 ### 登録フォーム作成(new,create)
 ### 編集フォーム作成(edit,update)
 ### 一覧表示作成(index)

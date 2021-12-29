@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    get 'users/new'
+    get 'users/edit'
+    get 'users/show'
+    get 'users/index'
+  end
   resources :tasks
   # トップページにtaskのindexページを表示
   root to: 'tasks#index'
