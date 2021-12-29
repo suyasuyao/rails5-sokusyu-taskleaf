@@ -722,6 +722,8 @@ nameがblankの際、検証の前にデータを修正するコールバック�
 ## Userモデルを作る
 
 userモデルを作成
+password_digestにはダイジェスト化したパスワード入れるが、この時点では単なる平文
+
 ```shell
  docker-compose exec web bin/rails g model user name:string email:string password_digest:string
 
@@ -771,4 +773,17 @@ gem 'bcrypt', '~> 3.1.7'
 bcryptのgemがあるか確認する
 ```shell
 docker-compose exec web gem list
+```
+
+userクラスにhas_secure_passwordをいれることでパスワードのダイジェスト化が可能になる
+modelとしては、passwordとpassword_confirmationがDBに保存されないカラムとして設定される
+また、それらをもとにサーバー側でpassword_digestが作成され保存される
+
+
+```ruby
+class User < ApplicationRecord
+
+  has_secure_password
+end
+
 ```
