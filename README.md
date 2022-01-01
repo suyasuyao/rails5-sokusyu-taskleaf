@@ -758,6 +758,17 @@ end
  docker-compose exec web bin/rails db:migrate
 ```
 
+モデルの各カラムは非null またメールアドレスはユニーク検証とする
+```ruby
+class User < ApplicationRecord
+
+  has_secure_password
+  validates :name ,presence: true
+  validates :email ,presence: true, uniqueness: true
+end
+
+```
+
 ## パスワードをdigest変換し保存する
 
 bcryptを追加
@@ -813,6 +824,7 @@ end
 
 
 ## ユーザー管理のためのコントローラを追加する
+基本はtaskと同じだが、URLとファイルのパスが微妙に違う
 ```shell
  docker-compose exec web bin/rails g controller Admin::Users new edit show index
 ```
@@ -832,7 +844,77 @@ end
 ```
 
 ### 登録フォーム作成(new,create)
+パスの部分に注意
+controllerのcreateとnewを設定
+```ruby
+def new
+ @user = User.new
+end
+
+def create
+ @user = User.new(user_params)
+
+ if @user.save
+  redirect_to admin_user_url(@user) ,  notice: "ユーザー「#{@user.name}」を登録しました。"
+ else
+  render :new
+ end
+
+end
+```
+
+viewのnewを作成
+```erbruby
+<h1>ユーザー新規登録</h1>
+
+<div class="nav justify-content-end">
+  <%= link_to "一覧", admin_users_path, class: "nav-link" %>
+</div>
+
+<%= render partial: "form", locals: {user: @user} %>
+```
+
+viewの_formを作成
+adminの部分はチェックボックスとする。
+```erbruby
+<% if user.errors.present? %>
+<ul id="error_explantion">
+    <% user.errors.full_messages.each do|message| %>
+    <li><%= message %></li>
+  <% end %>
+</ul>
+<% end %>
+
+<%= form_with model:[:admin, user], local:true do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control", id: "user_name" %>
+    </div>
+  <div class="form-group">
+    <%= f.label :email %>
+    <%= f.text_area :email, rows:5, class:"form-control", id: "user_email" %>
+  </div>
+    <div class="form-check">
+    <%= f.label :admin, class: "form-check-label" do %>
+    <%= f.check_box :admin, class: "form-check-label", id: "user_admin" %>
+            管理者権限
+    <% end %>
+    </div>
+  <div class="form-group">
+    <%= f.label :password %>
+    <%= f.text_field :password, class: "form-control", id: "user_password" %>
+  </div>
+    <div class="form-group">
+    <%= f.label :password_confirmation %>
+    <%= f.text_field :password_confirmation, class: "form-control", id: "user_password_confirmation" %>
+    </div>
+  <%= f.submit class: "btn btn-primary" %>
+<% end %>
+```
+
 ### 編集フォーム作成(edit,update)
 ### 一覧表示作成(index)
+
+基本タスク登録画面と同じ
 ### ユーザー詳細作成(show)
 ### ユーザー削除作成(delete)
