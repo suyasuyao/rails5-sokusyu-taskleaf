@@ -913,8 +913,31 @@ adminの部分はチェックボックスとする。
 ```
 
 ### 編集フォーム作成(edit,update)
+
+```ruby
+def edit
+@user = User.find(params[:id])
+end
+
+def update
+@user = User.find(params[:id])
+
+    if @user.update(user_params)
+
+      redirect_to admin_user_url(@user) , notice: "ユーザー「#{@user.name}」を更新しました"
+    else
+      render :edit
+    end
+
+end
+```
+formを流用するので基本viewはnewと同じ
 ### 一覧表示作成(index)
 
 基本タスク登録画面と同じ
 ### ユーザー詳細作成(show)
 ### ユーザー削除作成(delete)
+
+
+###  locale情報を作成する
+localeにtaskのときと同様に登録する
