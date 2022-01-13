@@ -947,7 +947,46 @@ localeにtaskのときと同様に登録する
 
 ## ログイン機能を追加する(Session機能の追加）
 
+### ログインフォームの作成
 
 ```shell
  docker-compose exec web bin/rails g controller Sessions new
+```
+
+loginをリダイレクトする
+config/routes.rb
+```ruby
+Rails.application.routes.draw do
+  get 'sessions/new'
+  namespace :admin do
+    resources :users
+  end
+  resources :tasks
+  # トップページにtaskのindexページを表示
+  root to: 'tasks#index'
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+end
+
+```
+
+app/views/sessions/new.html.erb
+
+```erbruby
+<h1>ログイン</h1>
+
+
+<%= form_with scope: :session, local: true do |f| %>
+  <div class="form-group">
+    <%= f.label :email, 'メールアドレス' %>
+    <%= f.text_field :email, class: 'form-control', id: 'session_email' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :password, 'パスワード' %>
+    <%= f.text_field :password_field, class: 'form-control', id: 'session_password' %>
+
+  </div>
+  <%= f.submit 'ログインする', class:'btn btn-primary' %>
+<% end %>
+
+
 ```
