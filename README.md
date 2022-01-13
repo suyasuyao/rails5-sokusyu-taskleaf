@@ -944,3 +944,10 @@ formを流用するので基本viewはnewと同じ
 
 ###  locale情報を作成する
 localeにtaskのときと同様に登録する
+
+## ログイン機能を追加する(Session機能の追加）
+
+
+```shell
+ docker-compose exec web bin/rails g controller Sessions new
+```
