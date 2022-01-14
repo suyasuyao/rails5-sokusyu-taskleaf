@@ -957,7 +957,8 @@ loginをリダイレクトする
 config/routes.rb
 ```ruby
 Rails.application.routes.draw do
-  get 'sessions/new'
+ get 'login', to: 'sessions#new'
+ post 'login', to: 'sessions#create'
   namespace :admin do
     resources :users
   end
@@ -971,6 +972,7 @@ end
 
 app/views/sessions/new.html.erb
 
+ここで指定したカラム名がリクエストパラメータに入る
 ```erbruby
 <h1>ログイン</h1>
 
@@ -982,11 +984,44 @@ app/views/sessions/new.html.erb
   </div>
   <div class="form-group">
     <%= f.label :password, 'パスワード' %>
-    <%= f.text_field :password_field, class: 'form-control', id: 'session_password' %>
+    <%= f.text_field :password, class: 'form-control', id: 'session_password' %>
 
   </div>
   <%= f.submit 'ログインする', class:'btn btn-primary' %>
 <% end %>
 
+
+```
+
+### ログイン処理
+
+app/controllers/sessions_controller.rb
+
+```ruby
+class SessionsController < ApplicationController
+  def new
+  end
+
+  def create
+   # ユーザーをリクエストのemailアドレスで検索する
+    user = User.find_by(email: session_params[:email])
+   # リクエストのパスワードをハッシュ化した値と、ユーザー自身のパスワードダイジェストが一致するか確認する
+    if user&.authenticate(session_params[:password])
+      session[:user_id] = user.id
+      redirect_to root_url, notice: 'ログインしました'
+    else
+      render :new
+    end
+
+  end
+
+
+  private
+  def session_params
+   #リクエストパラメータから、メールアドレスとパスワードだけ抜き取る。対象属性の指定はerb上に記載している
+    params.require(:session).permit(:email, :password)
+
+  end
+end
 
 ```
