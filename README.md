@@ -1304,3 +1304,15 @@ class Admin::UsersController < ApplicationController
 end
 
 ```
+
+# 最初の管理者ユーザを作る
+db/seeds.rb
+```ruby
+# 管理者ユーザーの作成
+User.create!(
+  name: "admin",
+  email: "admin@example.com",
+  password: "admin",
+  admin: true
+)
+```
