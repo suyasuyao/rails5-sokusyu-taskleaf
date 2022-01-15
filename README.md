@@ -1042,3 +1042,38 @@ class ApplicationController < ActionController::Base
 end
 
 ```
+
+### ログアウト処理を実装(destroy)
+
+app/controllers/sessions_controller.rb
+
+```ruby
+  def destroy
+ #reset_sessionは組み込みで用意されている
+    reset_session
+    redirect_to root_url, notice: 'ログアウトしました'
+  end
+```
+
+### ログイン・ログアウトのヘッダーを作成
+app/views/layouts/application.html.erb
+
+以下のようにcurrentユーザーがあるかどうかで、ログイン常態か判別する
+```html
+
+    <div class= "app-title navbar navbar-expand-md navbar-light bg-light">
+      <div class="navbar-brand"> Taskleaf </div>
+      <ul class="navbar-nav ml-auto">
+        <% if current_user %>
+          <li class="nav-item"><%= link_to 'タスク一覧', tasks_path, class: 'nav-link'%></li>
+          <li class="nav-item"><%= link_to 'ユーザー一覧',admin_users_path, class: 'nav-link' %></li>
+          <li class="nav-item"><%= link_to 'ログアウト', logout_path, method: :delete, class: 'nav-link' %></li>
+        <% else %>
+          <li class="nav-item"><%= link_to 'ログイン', login_path, class: "nav-link" %></li>
+        <% end %>
+      </ul>
+    </div>
+
+```
+
+
