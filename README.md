@@ -1264,3 +1264,43 @@ class TasksController < ApplicationController
 end
 
 ```
+
+# ユーザ管理機能（admin機能）を管理者ユーザのみに利用させる
+
+ユーザー一覧を管理者のみに表示させる
+
+
+```html
+          <% if current_user.admin? %>
+          <li class="nav-item"><%= link_to 'ユーザー一覧',admin_users_path, class: 'nav-link' %></li>
+          <% end %>
+```
+
+app/controllers/admin/users_controller.rb
+```ruby
+class Admin::UsersController < ApplicationController
+  before_action :require_admin
+
+  #省略
+
+  def require_admin
+    redirect_to root_url unless current_user.admin?
+  end
+end
+
+```
+
+ユーザー機能を実施する際、admin以外ならルートに遷移する
+app/controllers/admin/users_controller.rb
+
+```ruby
+class Admin::UsersController < ApplicationController
+  before_action :require_admin
+
+  # 省略
+  def require_admin
+    redirect_to root_url unless current_user.admin?
+  end
+end
+
+```
