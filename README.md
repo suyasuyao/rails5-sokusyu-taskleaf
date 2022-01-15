@@ -1118,7 +1118,7 @@ class SessionsController < ApplicationController
 
 タスクにユーザテーブルへの参照追記する。 ロールバック用にダウンの定義も記載する。
 
-またモデル定義に、関係性も明記する。
+
 
 ```shell
  docker-compose exec web bin/rails g migration AddUserIdToTasks
@@ -1142,5 +1142,44 @@ end
  docker-compose exec web bin/rails db:migrate
  ```
 
+またモデル定義に、関係性も明記する。
+
+app/models/task.rb
+```ruby
+class Task < ApplicationRecord
+  before_validation :set_nameless_name
+  validates :name, presence: true,length: {maximum:30}
+  validate :validate_name_not_including_comma
+
+  belongs_to :user
+
+  private
+  def validate_name_not_including_comma
+    errors.add(:name, 'にカンマをふくめることはできません') if name&.include?(',')
+  end
+
+  def set_nameless_name
+    self.name = '名前なし' if name.blank?
+  end
+end
+
+```
+
+app/models/user.rb
+```ruby
+class User < ApplicationRecord
+
+  has_secure_password
+  validates :name ,presence: true
+  validates :email ,presence: true, uniqueness: true
+
+  has_many :tasks
+end
+
+```
+
 ## タスク登録時に、ユーザーを紐付けるように設定
+
+
+
 ## ログインしているユーザのタスクのみ読み出す
