@@ -1086,15 +1086,7 @@ class ApplicationController < ActionController::Base
  # リダイレクト処理を全画面でやる
  before_action :login_required
 
- private
-
- def current_user
-  @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
-  p @current_user
-  p session[:user_id]
-  @current_user
- end
- 
+ #省略
  #ログインしていなければ、ログインURLにリダイレクト
  def login_required
   redirect_to login_url unless current_user
@@ -1147,20 +1139,11 @@ end
 app/models/task.rb
 ```ruby
 class Task < ApplicationRecord
-  before_validation :set_nameless_name
-  validates :name, presence: true,length: {maximum:30}
-  validate :validate_name_not_including_comma
+ #省略
 
   belongs_to :user
 
-  private
-  def validate_name_not_including_comma
-    errors.add(:name, 'にカンマをふくめることはできません') if name&.include?(',')
-  end
-
-  def set_nameless_name
-    self.name = '名前なし' if name.blank?
-  end
+ #省略
 end
 
 ```
@@ -1169,9 +1152,7 @@ app/models/user.rb
 ```ruby
 class User < ApplicationRecord
 
-  has_secure_password
-  validates :name ,presence: true
-  validates :email ,presence: true, uniqueness: true
+ #省略
 
   has_many :tasks
 end
