@@ -1110,3 +1110,37 @@ class SessionsController < ApplicationController
  # 全画面でやるのをスキップする
   skip_before_action :login_required
 ```
+
+# ログインできているユーザのみデータだけ利用可能とする
+ログインしているユーザーと紐づくタスクデータだけを利用可能にする。 (1:nの関係)
+
+## DB上でタスクとユーザーを1対nの関係とする
+
+タスクにユーザテーブルへの参照追記する。 ロールバック用にダウンの定義も記載する。
+
+またモデル定義に、関係性も明記する。
+
+```shell
+ docker-compose exec web bin/rails g migration AddUserIdToTasks
+ ```
+
+db/migrate/20220115090012_add_user_id_to_tasks.rb
+```ruby
+class AddUserIdToTasks < ActiveRecord::Migration[5.2]
+  def up
+    execute 'DELETE FROM tasks;'
+    add_reference :tasks, :user, null: false, index: true
+  end
+  def down
+    remove_reference :tasks, :user, index: true
+  end
+end
+
+```
+
+```shell
+ docker-compose exec web bin/rails db:migrate
+ ```
+
+## タスク登録時に、ユーザーを紐付けるように設定
+## ログインしているユーザのタスクのみ読み出す
