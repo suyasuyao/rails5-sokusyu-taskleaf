@@ -698,7 +698,7 @@ if name&.include?
 
 
 ```ruby
-class Task < ApplicationRecord
+class Task < ApplicationRecordz
   before_validation :set_nameless_name
   validates :name, presence: true,length: {maximum:30}
   validate :validate_name_not_including_comma
@@ -902,7 +902,7 @@ adminの部分はチェックボックスとする。
     </div>
   <div class="form-group">
     <%= f.label :password %>
-    <%= f.text_field :password, class: "form-control", id: "user_password" %>
+    <%= f.password_field :password, class: 'form-control', id: 'session_password' %>
   </div>
     <div class="form-group">
     <%= f.label :password_confirmation %>
@@ -984,7 +984,7 @@ app/views/sessions/new.html.erb
   </div>
   <div class="form-group">
     <%= f.label :password, 'パスワード' %>
-    <%= f.text_field :password, class: 'form-control', id: 'session_password' %>
+    <%= f.password_field :password, class: 'form-control', id: 'session_password' %>
 
   </div>
   <%= f.submit 'ログインする', class:'btn btn-primary' %>
