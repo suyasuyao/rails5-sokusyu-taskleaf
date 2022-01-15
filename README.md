@@ -1077,3 +1077,36 @@ app/views/layouts/application.html.erb
 ```
 
 
+### 非ログイン時にタスク管理をできなくする
+app/controllers/application_controller.rb
+
+```ruby
+class ApplicationController < ActionController::Base
+ helper_method :current_user
+ # リダイレクト処理を全画面でやる
+ before_action :login_required
+
+ private
+
+ def current_user
+  @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  p @current_user
+  p session[:user_id]
+  @current_user
+ end
+ 
+ #ログインしていなければ、ログインURLにリダイレクト
+ def login_required
+  redirect_to login_url unless current_user
+ end
+end
+
+```
+
+app/controllers/sessions_controller.rb
+
+```ruby
+class SessionsController < ApplicationController
+ # 全画面でやるのをスキップする
+  skip_before_action :login_required
+```
