@@ -1025,3 +1025,20 @@ class SessionsController < ApplicationController
 end
 
 ```
+
+app/controllers/application_controller.rb
+```ruby
+class ApplicationController < ActionController::Base
+  helper_method :current_user
+
+  private
+
+  #もしログイン済み（セッション情報にユーザーIDが格納されていれば、currentuserにUser情報を入れる
+  # a ||= xxx　はaが偽か未定義なら、aにxxxを代入する
+  # 
+  def current_user
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+end
+
+```
