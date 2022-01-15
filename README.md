@@ -1179,7 +1179,21 @@ end
 ```
 
 ## タスク登録時に、ユーザーを紐付けるように設定
+app/controllers/tasks_controller.rb
 
+```ruby
+  def create
+ # currentuserに紐づくタスクを作成する。
+    @task = current_user.tasks.new(task_params)
 
+    if @task.save
+      #redirect先を@taskにすべきかどうか？ｘ
+      redirect_to @task,  notice: "タスク「#{@task.name}」を登録しました。"
+    else
+      render :new
+    end
+
+  end
+```
 
 ## ログインしているユーザのタスクのみ読み出す
