@@ -1297,3 +1297,11 @@ User.create!(
   admin: true
 )
 ```
+
+# タスク一覧を日付順で表示する
+
+```ruby
+  def index
+    @tasks = current_user.tasks.order(created_at: :desc)
+  end
+```
