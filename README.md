@@ -1305,3 +1305,12 @@ User.create!(
     @tasks = current_user.tasks.order(created_at: :desc)
   end
 ```
+
+
+# scopeを活用する 
+
+```ruby
+  scope :recent, -> { order(created_at: :desc)}
+```
+
+上記の設定をするとtaskモデルにおいて、クエリー用のメソッドrecentが追加される。
