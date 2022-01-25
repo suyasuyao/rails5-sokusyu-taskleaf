@@ -1402,3 +1402,11 @@ docker-compose exec web bash
 gem list|grep auto
 ```
 
+app/views/tasks/show.html.erb
+auto_linkメソッドをつかうことでリンクの文字列にできる
+```html
+      <td>
+        <%= auto_link(simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div")) %>
+      </td>
+```
+
