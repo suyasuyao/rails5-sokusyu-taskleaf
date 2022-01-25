@@ -1,10 +1,10 @@
 class TasksController < ApplicationController
+  before_action :set_task, only: [:show, :edit, :update,:destroy]
   def index
     @tasks = current_user.tasks.order(created_at: :desc)
   end
 
   def show
-    set_task
   end
 
   def new
@@ -24,12 +24,11 @@ class TasksController < ApplicationController
   end
 
   def edit
-    set_task
+
   end
 
   def update
-    set_task
-    # task.update(task_params)
+
     # redirect_to tasks_url, notice: "タスク「#{task.name}」を更新しました。"
 
     if @task.update(task_params)
@@ -41,7 +40,7 @@ class TasksController < ApplicationController
   end
 
   def destroy
-    set_task
+    # set_task
     @task.destroy
     redirect_to tasks_url, notice: "タスク「#{@task.name}」を削除しました。"
   end
