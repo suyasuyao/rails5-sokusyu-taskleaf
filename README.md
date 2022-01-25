@@ -1314,3 +1314,99 @@ User.create!(
 ```
 
 上記の設定をするとtaskモデルにおいて、クエリー用のメソッドrecentが追加される。
+
+# フィルタを使い重複を避ける
+
+before_actionの部分に、action実施前に実施する共通メソッドをいれる
+
+```shell
+class TasksController < ApplicationController
+  before_action :set_task, only: [:show, :edit, :update,:destroy]
+  def index
+    @tasks = current_user.tasks.order(created_at: :desc)
+  end
+
+  def show
+  end
+
+  def new
+    @task = current_user.tasks.new
+  end
+
+  def create
+    @task = current_user.tasks.new(task_params)
+
+    if @task.save
+      #redirect先を@taskにすべきかどうか？ｘ
+      redirect_to @task,  notice: "タスク「#{@task.name}」を登録しました。"
+    else
+      render :new
+    end
+
+  end
+
+  def edit
+
+  end
+
+  def update
+
+    # redirect_to tasks_url, notice: "タスク「#{task.name}」を更新しました。"
+
+    if @task.update(task_params)
+      #redirect先を@taskにすべきかどうか？ｘ
+      redirect_to @task,  notice: "タスク「#{@task.name}」を更新しました。"
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    # set_task
+    @task.destroy
+    redirect_to tasks_url, notice: "タスク「#{@task.name}」を削除しました。"
+  end
+
+  private
+
+  def set_task
+    @task = current_user.tasks.find(params[:id])
+  end
+
+  def task_params
+    # デバッグ用
+    p "パラメータ: #{params} "
+    p params.class
+    params.require(:task).permit(:name, :description)
+  end
+end
+
+```
+# URLをリンクとして表示する 
+Gemfileを編集し下記を追加
+
+```ruby
+gem 'rails_autolink'
+```
+
+ビルド実施
+```shell
+docker-compose build --no-cache
+
+```
+
+ライブラリが追加されてるか確認
+```shell
+
+docker-compose exec web bash
+gem list|grep auto
+```
+
+app/views/tasks/show.html.erb
+auto_linkメソッドをつかうことでリンクの文字列にできる
+```html
+      <td>
+        <%= auto_link(simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div")) %>
+      </td>
+```
+
