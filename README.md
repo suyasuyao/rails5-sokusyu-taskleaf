@@ -1454,3 +1454,17 @@ RSpec.configure do |config|
 
 
 ### Factorybotのインストール
+
+
+ビルド実施
+```shell
+docker-compose build --no-cache
+
+```
+
+コンテナを再起動しライブラリが追加されてるか確認
+```shell
+
+ docker-compose exec web bash -c  "gem list |grep factory_bot"
+
+```
