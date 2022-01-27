@@ -1424,3 +1424,9 @@ docker-compose build --no-cache
  docker-compose exec web bash -c  "gem list |grep rspec"
 
 ```
+
+以下のコマンドを実行し、rspecに必要なファイル生成
+
+```shell
+ docker-compose exec web bin/rails g rspec:install
+```
