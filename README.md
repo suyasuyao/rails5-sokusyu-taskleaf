@@ -1412,6 +1412,7 @@ auto_linkメソッドをつかうことでリンクの文字列にできる
 # テスト
 ##  5-5 SystemSpecを書くための準備
 
+### Rspecのインストールと初期準備
 ビルド実施
 ```shell
 docker-compose build --no-cache
@@ -1430,3 +1431,26 @@ docker-compose build --no-cache
 ```shell
  docker-compose exec web bin/rails g rspec:install
 ```
+
+不要なテストフォルダの削除
+```shell
+rm -r taskleaf/test
+```
+
+
+### Capybaraの初期準備
+rspecとcapybaraの連携
+System Specで利用するドライバの設定（今回はHeadless Chromeを利用）
+spec/spec_helper.rb
+
+```ruby
+require 'capybara/rspec'
+
+RSpec.configure do |config|
+  config.before(:each,type: :system) do
+    driven_by :selenium_chrome_headless
+  end
+```
+
+
+### Factorybotのインストール
