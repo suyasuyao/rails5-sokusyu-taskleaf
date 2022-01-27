@@ -1395,11 +1395,11 @@ docker-compose build --no-cache
 
 ```
 
-ライブラリが追加されてるか確認
+コンテナを再起動しライブラリが追加されてるか確認
 ```shell
 
-docker-compose exec web bash
-gem list|grep auto
+ docker-compose exec web bash -c  "gem list |grep auto"
+
 ```
 
 app/views/tasks/show.html.erb
@@ -1409,4 +1409,18 @@ auto_linkメソッドをつかうことでリンクの文字列にできる
         <%= auto_link(simple_format(h(@task.description),{},sanitize:false, wrapper_tag:"div")) %>
       </td>
 ```
+# テスト
+##  5-5 SystemSpecを書くための準備
 
+ビルド実施
+```shell
+docker-compose build --no-cache
+
+```
+
+コンテナを再起動しライブラリが追加されてるか確認
+```shell
+
+ docker-compose exec web bash -c  "gem list |grep rspec"
+
+```
