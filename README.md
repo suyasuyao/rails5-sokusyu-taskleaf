@@ -1504,6 +1504,14 @@ docker-compose  run --rm test bundle exec rspec spec/system/tasks_spec.rb
 
 ```
 
+test環境への接続方法
+```shell
+docker-compose run --rm test bin/rails c -e test
+docker-compose run --rm test bin/rails db -e test
+```
+
+
+
 
 https://qiita.com/na-tsune/items/91630257294aa0ea4fc8
 
@@ -1576,6 +1584,8 @@ services:
 ```
 
 以下を設定しこの設定でdriverを利用する。
+
+https://qiita.com/aiandrox/items/7ff4d73416dc15f0cc0f
 
 spec/rails_helper.rb
 ```ruby
