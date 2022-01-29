@@ -11,9 +11,9 @@
 docker-compose up
 
 # データベースコンテナが存在しないときのみ
- docker-compose run web bin/rails db:create 
+ docker-compose exec web bin/rails db:create 
 # マイグレーションやデータ投入を行う際に 
- docker-compose run web bin/rails db:migrate db:seed
+ docker-compose exec web bin/rails db:migrate db:seed
 
 
 #リセットしたいとき
@@ -1412,6 +1412,8 @@ auto_linkメソッドをつかうことでリンクの文字列にできる
 # テスト
 ##  5-5 SystemSpecを書くための準備
 
+testの際はtestの設定でDBが作成されるし、アプリケーションもtestの環境変数になる
+
 ### Rspecのインストールと初期準備
 ビルド実施
 ```shell
@@ -1466,5 +1468,182 @@ docker-compose build --no-cache
 ```shell
 
  docker-compose exec web bash -c  "gem list |grep factory_bot"
+
+```
+
+## 5-7 FactoryBotでテストデータ作成できるように準備する
+spec/factories/task.rb
+```ruby
+FactoryBot.define do
+  factory :task do
+    name {'テストを書く'}
+    description {'Rspec&Capybara&Factorybotを準備する'}
+    user
+  end
+end
+```
+
+spec/factories/user.rb
+```ruby
+FactoryBot.define do
+  factory :user do
+    name {'テストユーザー'}
+    email { 'test1@example,com'}
+    password { 'password' }
+  end
+end
+```
+
+
+
+## 5-8
+
+test(webと中身はほぼ同じ)を起動させ、終了後は削除する
+```shell
+docker-compose  run --rm test bundle exec rspec spec/system/tasks_spec.rb
+
+```
+
+
+https://qiita.com/na-tsune/items/91630257294aa0ea4fc8
+
+chromeコンテナが起動しない？
+VNC 環境の設定が必要
+
+### VNCサーバつきheadless chromeのコンテナを導入する
+
+webコンテナとtestコンテナは中身同じ
+コンテナを分けてるのは、ポートの干渉を避けるためだが、やらなくてもいいかもしれない？
+
+
+
+```yml
+version: "3"
+services:
+ db:
+  build:
+   context: .
+   dockerfile: docker/db/Dockerfile
+  ports:
+   - 5432:5432
+  environment:
+   POSTGRES_USER: admin
+   POSTGRES_PASSWORD: admin
+ web:
+  build:
+   context: .
+   dockerfile: docker/web/Dockerfile
+   args:
+    - BASEDIR=${BASEDIR}
+  command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+  volumes:
+   - ./${BASEDIR}:/${BASEDIR}:cached
+   - ./docker/web/database.yml:/${BASEDIR}/config/database.yml
+  ports:
+   - "3000:3000"
+  links:
+   - db
+  environment:
+   TZ: "Asia/Tokyo"
+ test:
+  build:
+   context: .
+   dockerfile: docker/web/Dockerfile
+   args:
+    - BASEDIR=${BASEDIR}
+  command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
+  volumes:
+   - ./${BASEDIR}:/${BASEDIR}:cached
+   - ./docker/web/database.yml:/${BASEDIR}/config/database.yml
+  ports:
+   - "3001:3001"
+  links:
+   - db
+   - chrome
+  environment:
+   TZ: "Asia/Tokyo"
+ chrome:
+  image: selenium/standalone-chrome-debug:latest
+  ports:
+   - 4444:4444
+   - 5900:5900
+
+```
+
+.rspecの設定
+```.rspec
+--require rails_helper
+```
+
+以下を設定しこの設定でdriverを利用する。
+
+spec/rails_helper.rb
+```ruby
+# This file is copied to spec/ when you run 'rails generate rspec:install'
+require 'spec_helper'
+ENV['RAILS_ENV'] ||= 'test'
+
+require File.expand_path('../config/environment', __dir__)
+
+# Prevent database truncation if the environment is production
+abort("The Rails environment is running in production mode!") if Rails.env.production?
+require 'rspec/rails'
+
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError => e
+  puts e.to_s.strip
+  exit 1
+end
+
+
+Capybara.register_driver :remote_chrome do |app|
+  url = "http://chrome:4444/wd/hub"
+  caps = ::Selenium::WebDriver::Remote::Capabilities.chrome(
+    "goog:chromeOptions" => {
+      "args" => [
+        "no-sandbox",
+        # "headless",
+        "disable-gpu",
+        "window-size=1680,1050"
+      ]
+    }
+  )
+  Capybara::Selenium::Driver.new(app, browser: :remote, url: url, desired_capabilities: caps)
+end
+
+RSpec.configure do |config|
+
+  config.before(:each, type: :system) do
+    driven_by :rack_test
+  end
+
+  config.before(:each, type: :system, js: true) do
+    driven_by :remote_chrome
+    Capybara.server_host = IPSocket.getaddress(Socket.gethostname)
+    Capybara.server_port = 3000
+    Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
+  end
+end
+```
+
+js: trueを入れたrspecを作成してテストする。
+```ruby
+      it 'ユーザーAが作成したタスクが表示される' , js: true do
+        #作成済みのタスクの名称が画面に表示されることを確認
+        expect(page).to have_content '最初のタスク'
+      end
+
+
+```
+
+### VNCクライアント経由でGUI画面に接続する
+https://qiita.com/yutachaos/items/4a1da5d55a3bf0df889e
+
+chromeコンテナを立ち上げた上で以下で接続
+
+```shell
+open vnc://localhost:5900
+# passはsecret
 
 ```

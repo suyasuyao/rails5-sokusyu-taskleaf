@@ -25,3 +25,25 @@ services:
       - db
     environment:
       TZ: "Asia/Tokyo"
+  test:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+      args:
+        - BASEDIR=${BASEDIR}
+    command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
+    volumes:
+      - ./${BASEDIR}:/${BASEDIR}:cached
+      - ./docker/web/database.yml:/${BASEDIR}/config/database.yml
+    ports:
+      - "3001:3001"
+    links:
+      - db
+      - chrome
+    environment:
+      TZ: "Asia/Tokyo"
+  chrome:
+    image: selenium/standalone-chrome-debug:latest
+    ports:
+      - 4444:4444
+      - 5900:5900
