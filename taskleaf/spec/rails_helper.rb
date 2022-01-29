@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
+require_relative "headless.rb"
+
 ENV['RAILS_ENV'] ||= 'test'
 
 require File.expand_path('../config/environment', __dir__)
@@ -18,14 +20,26 @@ end
 
 Capybara.register_driver :remote_chrome do |app|
   url = "http://chrome:4444/wd/hub"
+
+  #@headlessはheadless.rb内に定義する。
+  if @headless || @headless.nil?
+    caps_arg = [
+      "no-sandbox",
+      "headless",
+      "disable-gpu",
+      "window-size=1680,1050"
+    ]
+  else
+    caps_arg = [
+      "no-sandbox",
+      "disable-gpu",
+      "window-size=1680,1050"
+    ]
+  end
+
   caps = ::Selenium::WebDriver::Remote::Capabilities.chrome(
     "goog:chromeOptions" => {
-      "args" => [
-        "no-sandbox",
-        # "headless",
-        "disable-gpu",
-        "window-size=1680,1050"
-      ]
+      "args" => caps_arg
     }
   )
   Capybara::Selenium::Driver.new(app, browser: :remote, url: url, desired_capabilities: caps)

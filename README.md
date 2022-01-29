@@ -1657,3 +1657,23 @@ open vnc://localhost:5900
 # passはsecret
 
 ```
+
+## テスト時のブラウザのヘッドレスの有無を簡単に切り替えられるようにする 
+
+```ruby
+  #@headlessはheadless.rb内に定義する。
+  if @headless || @headless.nil?
+    caps_arg = [
+      "no-sandbox",
+      "headless",
+      "disable-gpu",
+      "window-size=1680,1050"
+    ]
+  else
+    caps_arg = [
+      "no-sandbox",
+      "disable-gpu",
+      "window-size=1680,1050"
+    ]
+  end
+```
