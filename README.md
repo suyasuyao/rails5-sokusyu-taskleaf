@@ -1677,3 +1677,115 @@ open vnc://localhost:5900
     ]
   end
 ```
+
+## beforeを利用した共通化
+
+before句で共通処理を行うことでテスト準備を簡略化
+
+spec/system/tasks_spec.rb
+```ruby
+require 'rails_helper'
+
+describe 'タスク管理機能', type: :system do
+  describe '一覧機能' do
+    before do
+    # #ユーザーAを作成
+    user_a = FactoryBot.create(:user,name: 'ユーザーA', email: 'a@example.com')
+    #
+    # # 作成者がユーザーAであるタスクを作成
+    FactoryBot.create(:task, name:'最初のタスク', user: user_a)
+
+    #ユーザーAでログイン
+    visit login_path
+    fill_in 'メールアドレス' , with: 'a@example.com'
+    fill_in 'パスワード' , with: 'password'
+    click_button 'ログインする'
+
+    end
+
+    context 'ユーザーAがログインしているとき'do
+      it 'ユーザーAが作成したタスクが表示される' , js: true do
+        #作成済みのタスクの名称が画面に表示されることを確認
+        expect(page).to have_content '最初のタスク'
+      end
+    end
+
+    context 'ユーザーBがログインしているとき' do
+      before do
+        # #ユーザーBを作成
+        user_b = FactoryBot.create(:user,name: 'ユーザーB', email: 'b@example.com')
+      end
+
+      it 'ユーザーAが作成したタスクが表示されない' , js: true do
+        expect(page).to have_no_content '最初のタスク'
+      end
+    end
+  end
+end
+```
+
+## letを利用した共通化
+
+
+let、let!を使うことで使うことで処理を変数のように扱う。
+
+letとlet!の違いはletは必ず１回は実施する。
+letは対象の処理を呼び出す処理が記載されてない場合、実施されない
+
+spec/system/tasks_spec.rb
+
+```ruby
+require 'rails_helper'
+
+describe 'タスク管理機能', type: :system do
+  # #ユーザーAを作成
+  let(:user_a) { FactoryBot.create(:user,name: 'ユーザーA', email: 'a@example.com')}
+
+  # #ユーザーBを作成
+  let(:user_b) { FactoryBot.create(:user,name: 'ユーザーB', email: 'b@example.com')}
+
+  # # 作成者がユーザーAであるタスクを作成(実行する)
+  let!(:task_a) { FactoryBot.create(:task, name:'最初のタスク', user: user_a)}
+
+  before do
+    visit login_path
+    fill_in 'メールアドレス' , with: login_user.email
+    fill_in 'パスワード' , with: login_user.password
+    click_button 'ログインする'
+  end
+
+  describe '一覧表示機能' do
+
+    context 'ユーザーAがログインしているとき'do
+      let(:login_user) { user_a }
+
+      it 'ユーザーAが作成したタスクが表示される' , js: true do
+        #作成済みのタスクの名称が画面に表示されることを確認
+        expect(page).to have_content '最初のタスク'
+      end
+    end
+
+    context 'ユーザーBがログインしているとき' do
+      let(:login_user) { user_b }
+
+      it 'ユーザーAが作成したタスクが表示されない' , js: true do
+        expect(page).to have_no_content '最初のタスク'
+      end
+    end
+  end
+
+  describe '詳細表示機能' do
+    context 'ユーザーAがログインしているとき' do
+      let(:login_user) { user_a }
+
+      before do
+        visit task_path( task_a )
+      end
+
+      it 'ユーザーAが作成したタスクが表示される' do
+        expect(page).to have_content '最初のタスク'
+      end
+    end
+  end
+end
+```
